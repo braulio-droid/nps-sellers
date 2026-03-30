@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sellers — Avaliação rápida</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ─── Tokens ─── */
+    :root {
+      --navy:   #0d1b2a;
+      --blue:   #1a5dab;
+      --blue-l: #e8f0fb;
+      --teal:   #0f6e56;
+      --coral:  #d85a30;
+      --cream:  #f7f5f0;
+      --white:  #ffffff;
+      --gray:   #6b7280;
+      --border: #e2e0d8;
+      --radius: 14px;
+      --ease:   cubic-bezier(.16,1,.3,1);
+    }
+
+    /* ─── Reset ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--navy);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0 0 48px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Header strip ─── */
+    .header {
+      width: 100%;
+      background: var(--navy);
+      padding: 18px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--white);
+      letter-spacing: .5px;
+    }
+    .logo span { color: #5b8fbb; font-size: 11px; font-family: 'DM Sans', sans-serif; font-weight: 300; margin-left: 8px; letter-spacing: 1.5px; text-transform: uppercase; }
+
+    /* ─── Card ─── */
+    .card {
+      width: min(520px, 100% - 32px);
+      margin-top: 36px;
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    /* ─── Card sections ─── */
+    .card-top {
+      padding: 32px 32px 0;
+    }
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 12px;
+    }
+    .greeting {
+      font-family: 'DM Serif Display', serif;
+      font-size: 26px;
+      line-height: 1.25;
+      color: var(--navy);
+      margin-bottom: 14px;
+    }
+    .greeting em { font-style: italic; color: var(--blue); }
+    .intro {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--gray);
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ─── Question ─── */
+    .question-wrap {
+      padding: 28px 32px 0;
+    }
+    .question {
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .scale-hint {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--gray);
+      margin-bottom: 20px;
+      padding: 0 2px;
+    }
+
+    /* ─── NPS Buttons ─── */
+    .nps-grid {
+      display: grid;
+      grid-template-columns: repeat(11, 1fr);
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .nps-btn {
+      aspect-ratio: 1;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--navy);
+      cursor: pointer;
+      transition: all .18s var(--ease);
+      position: relative;
+      overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nps-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: currentColor;
+      opacity: 0;
+      transition: opacity .15s;
+    }
+    .nps-btn:hover { transform: translateY(-2px); border-color: var(--blue); color: var(--blue); }
+    .nps-btn:active { transform: scale(.95); }
+
+    /* Detrator 0-6 */
+    .nps-btn.det.selected  { background: #fef0eb; border-color: var(--coral); color: var(--coral); transform: translateY(-2px) scale(1.06); box-shadow: 0 4px 14px rgba(216,90,48,.18); }
+    /* Neutro 7-8 */
+    .nps-btn.neu.selected  { background: #fefce8; border-color: #ca8a04; color: #854d0e; transform: translateY(-2px) scale(1.06); box-shadow: 0 4px 14px rgba(202,138,4,.18); }
+    /* Promotor 9-10 */
+    .nps-btn.pro.selected  { background: #ecfdf5; border-color: var(--teal); color: var(--teal); transform: translateY(-2px) scale(1.06); box-shadow: 0 4px 14px rgba(15,110,86,.18); }
+
+    /* ─── Comentário ─── */
+    .comment-wrap {
+      padding: 24px 32px 0;
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height .45s var(--ease), opacity .35s;
+      opacity: 0;
+    }
+    .comment-wrap.visible { max-height: 220px; opacity: 1; }
+    .comment-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--navy);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .comment-sub { font-size: 12px; color: var(--gray); margin-bottom: 10px; }
+    textarea {
+      width: 100%;
+      min-height: 80px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--navy);
+      background: var(--cream);
+      resize: none;
+      transition: border-color .2s;
+      outline: none;
+    }
+    textarea:focus { border-color: var(--blue); background: var(--white); }
+
+    /* ─── CTA ─── */
+    .cta-wrap {
+      padding: 24px 32px 32px;
+    }
+    .cta-btn {
+      width: 100%;
+      padding: 15px;
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .2s var(--ease);
+      position: relative;
+      overflow: hidden;
+      opacity: .4;
+      pointer-events: none;
+    }
+    .cta-btn.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .cta-btn:hover { background: #162b40; transform: translateY(-1px); }
+    .cta-btn:active { transform: scale(.98); }
+    .cta-btn .spinner {
+      display: none;
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      margin: 0 auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Feedback de categoria ─── */
+    .cat-label {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: .5px;
+      min-height: 18px;
+      margin-top: 6px;
+      transition: opacity .2s;
+      opacity: 0;
+    }
+    .cat-label.det { color: var(--coral); }
+    .cat-label.neu { color: #ca8a04; }
+    .cat-label.pro { color: var(--teal); }
+    .cat-label.show { opacity: 1; }
+
+    /* ─── Sucesso ─── */
+    .success-card {
+      display: none;
+      padding: 40px 32px;
+      text-align: center;
+    }
+    .success-icon {
+      width: 56px; height: 56px;
+      background: #ecfdf5;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 26px;
+    }
+    .success-card h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: var(--navy);
+    }
+    .success-card p {
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.7;
+    }
+
+    /* ─── Erro ─── */
+    .error-msg {
+      display: none;
+      margin: 0 32px 16px;
+      padding: 10px 14px;
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #991b1b;
+    }
+
+    /* ─── Footer ─── */
+    .footer {
+      margin-top: 20px;
+      font-size: 11px;
+      color: #aaa;
+      text-align: center;
+      line-height: 1.6;
+    }
+    .footer a { color: #aaa; text-decoration: underline; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 400px) {
+      .card-top, .question-wrap, .comment-wrap, .cta-wrap { padding-left: 20px; padding-right: 20px; }
+      .nps-grid { gap: 4px; }
+      .nps-btn { font-size: 12px; border-radius: 8px; }
+      .greeting { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Sellers <span>Insights</span></div>
+</div>
+
+<div class="card" id="form-card">
+
+  <!-- Topo -->
+  <div class="card-top">
+    <div class="eyebrow">Pesquisa NPS — <span id="mes-ref">este mês</span></div>
+    <h1 class="greeting">Olá, <em id="nome-contato">cliente</em>!</h1>
+    <p class="intro">
+      Sua opinião é o que orienta as nossas próximas decisões.
+      Responda uma pergunta rápida — leva menos de 30 segundos.
+    </p>
+  </div>
+
+  <!-- Escala NPS -->
+  <div class="question-wrap">
+    <p class="question">Em uma escala de 0 a 10, o quanto você recomendaria a Sellers a um colega ou parceiro de negócio?</p>
+    <div class="scale-hint">
+      <span>0 — Muito improvável</span>
+      <span>10 — Com certeza</span>
+    </div>
+    <div class="nps-grid" id="nps-grid">
+      <!-- Gerado via JS -->
+    </div>
+    <div class="cat-label" id="cat-label"></div>
+  </div>
+
+  <!-- Comentário -->
+  <div class="comment-wrap" id="comment-wrap">
+    <label class="comment-label" for="comentario">Quer nos contar mais? <span style="font-weight:300;color:var(--gray)">(opcional)</span></label>
+    <p class="comment-sub" id="comment-sub"></p>
+    <textarea id="comentario" placeholder="Escreva aqui..."></textarea>
+  </div>
+
+  <!-- Erro -->
+  <div class="error-msg" id="error-msg">Não conseguimos registrar sua resposta. Tente novamente em instantes.</div>
+
+  <!-- CTA -->
+  <div class="cta-wrap">
+    <button class="cta-btn" id="cta-btn" onclick="enviar()">
+      <span id="cta-text">Enviar avaliação</span>
+      <span class="spinner" id="spinner"></span>
+    </button>
+  </div>
+
+</div>
+
+<!-- Sucesso -->
+<div class="card" id="success-card" style="display:none">
+  <div class="success-card">
+    <div class="success-icon">✓</div>
+    <h2>Obrigado pela resposta!</h2>
+    <p>
+      Sua avaliação foi registrada com sucesso.<br>
+      Ela vai diretamente para o nosso time de Customer Success.
+    </p>
+  </div>
+</div>
+
+<div class="footer">
+  <span id="deal-ref"></span><br>
+  Não quer mais receber pesquisas? <a href="#" id="unsub-link">Cancelar inscrição</a>
+</div>
+
+<script>
+  /* ══════════════════════════════════════════════
+     CONFIG — ajuste apenas esta seção
+  ══════════════════════════════════════════════ */
+  const WEBHOOK_URL = 'https://hook.make.com/SEU_WEBHOOK_AQUI';
+  // ^ Substitua pelo webhook real gerado no Make (Cenário 3)
+
+  const CAT_TEXTS = {
+    det: { label: '😕 Detrator (0–6)', sub: 'Sentimos muito. O que poderíamos ter feito diferente?' },
+    neu: { label: '😐 Neutro (7–8)',   sub: 'O que faria você nos recomendar com mais confiança?' },
+    pro: { label: '😊 Promotor (9–10)', sub: 'Fico feliz em ouvir isso! Tem algo que podemos melhorar ainda?' },
+  };
+
+  /* ══════════════════════════════════════════════
+     LEITURA DOS PARÂMETROS DA URL
+  ══════════════════════════════════════════════ */
+  const params  = new URLSearchParams(window.location.search);
+  const token   = params.get('t')   || '';
+  const unsub   = params.get('unsub') === '1';
+  const notaURL = params.get('nota');   // nota pré-selecionada via link (opcional)
+
+  // Decodifica o token base64url para exibir nome e mês (sem servidor)
+  let contactId = '', dealId = '', mesISO = '';
+  try {
+    const decoded = atob(token.replace(/-/g,'+').replace(/_/g,'/'));
+    [contactId, dealId, mesISO] = decoded.split('|');
+  } catch(e) {}
+
+  // Exibe mês de referência
+  if (mesISO) {
+    const d = new Date(mesISO + 'T12:00:00');
+    document.getElementById('mes-ref').textContent =
+      d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+  }
+
+  // Exibe referência no footer
+  if (dealId) document.getElementById('deal-ref').textContent = 'Referência de negócio: #' + dealId;
+
+  // Unsub
+  document.getElementById('unsub-link').href = '?t=' + token + '&unsub=1';
+  if (unsub) {
+    document.getElementById('form-card').innerHTML =
+      '<div style="padding:40px 32px;text-align:center"><p style="font-size:15px;color:#6b7280">Você foi removido da lista de pesquisas. Obrigado!</p></div>';
+  }
+
+  /* ══════════════════════════════════════════════
+     MONTA OS BOTÕES NPS
+  ══════════════════════════════════════════════ */
+  let notaSelecionada = null;
+  const grid = document.getElementById('nps-grid');
+
+  for (let i = 0; i <= 10; i++) {
+    const cat = i <= 6 ? 'det' : i <= 8 ? 'neu' : 'pro';
+    const btn = document.createElement('button');
+    btn.className = `nps-btn ${cat}`;
+    btn.textContent = i;
+    btn.setAttribute('aria-label', `Nota ${i}`);
+    btn.onclick = () => selecionarNota(i, cat, btn);
+    grid.appendChild(btn);
+  }
+
+  // Pré-seleciona se vier na URL (ex: link com botões de nota no e-mail)
+  if (notaURL !== null) {
+    const n = parseInt(notaURL, 10);
+    if (n >= 0 && n <= 10) {
+      const cat = n <= 6 ? 'det' : n <= 8 ? 'neu' : 'pro';
+      const btns = grid.querySelectorAll('.nps-btn');
+      selecionarNota(n, cat, btns[n]);
+    }
+  }
+
+  function selecionarNota(nota, cat, btnEl) {
+    notaSelecionada = nota;
+    grid.querySelectorAll('.nps-btn').forEach(b => b.classList.remove('selected'));
+    btnEl.classList.add('selected');
+
+    // Label de categoria
+    const catLabel = document.getElementById('cat-label');
+    catLabel.textContent  = CAT_TEXTS[cat].label;
+    catLabel.className    = `cat-label ${cat} show`;
+
+    // Comentário
+    const wrap = document.getElementById('comment-wrap');
+    document.getElementById('comment-sub').textContent = CAT_TEXTS[cat].sub;
+    wrap.classList.add('visible');
+
+    // Ativa CTA
+    document.getElementById('cta-btn').classList.add('active');
+  }
+
+  /* ══════════════════════════════════════════════
+     ENVIO AO WEBHOOK
+  ══════════════════════════════════════════════ */
+  async function enviar() {
+    if (notaSelecionada === null) return;
+
+    const btn   = document.getElementById('cta-btn');
+    const txt   = document.getElementById('cta-text');
+    const spin  = document.getElementById('spinner');
+    const errEl = document.getElementById('error-msg');
+
+    // Loading state
+    btn.classList.remove('active');
+    txt.style.display  = 'none';
+    spin.style.display = 'block';
+    errEl.style.display = 'none';
+
+    const payload = {
+      t:          token,
+      contactId,
+      dealId,
+      mesISO,
+      nota:       notaSelecionada,
+      comentario: document.getElementById('comentario').value.trim(),
+    };
+
+    try {
+      const res = await fetch(WEBHOOK_URL, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error('status ' + res.status);
+
+      // Sucesso
+      document.getElementById('form-card').style.display   = 'none';
+      document.getElementById('success-card').style.display = 'block';
+
+    } catch(e) {
+      // Erro
+      txt.style.display  = 'block';
+      spin.style.display = 'none';
+      btn.classList.add('active');
+      errEl.style.display = 'block';
+    }
+  }
+</script>
+
+</body>
+</html>
