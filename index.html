@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sellers — Avaliação rápida</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Sellers <span>Insights</span></div>
+</div>
+
+<div class="card" id="form-card">
+  <div class="card-top">
+    <div class="eyebrow">Pesquisa NPS — <span id="mes-ref">este mês</span></div>
+    <h1 class="greeting">Olá, <em id="nome-contato">cliente</em>!</h1>
+    <p class="intro">
+      Sua opinião é o que orienta as nossas próximas decisões.
+      Responda uma pergunta rápida — leva menos de 30 segundos.
+    </p>
+  </div>
+
+  <div class="question-wrap">
+    <p class="question">Em uma escala de 0 a 10, o quanto você recomendaria a Sellers a um colega ou parceiro de negócio?</p>
+    <div class="scale-hint">
+      <span>0 — Muito improvável</span>
+      <span>10 — Com certeza</span>
+    </div>
+    <div class="nps-grid" id="nps-grid"></div>
+    <div class="cat-label" id="cat-label"></div>
+  </div>
+
+  <div class="comment-wrap" id="comment-wrap">
+    <label class="comment-label" for="comentario">
+      Quer nos contar mais? <span style="font-weight:300;color:var(--gray)">(opcional)</span>
+    </label>
+    <p class="comment-sub" id="comment-sub"></p>
+    <textarea id="comentario" placeholder="Escreva aqui..."></textarea>
+  </div>
+
+  <div class="error-msg" id="error-msg">
+    Não conseguimos registrar sua resposta. Tente novamente em instantes.
+  </div>
+
+  <div class="cta-wrap">
+    <button class="cta-btn" id="cta-btn" onclick="NPS.enviar()">
+      <span id="cta-text">Enviar avaliação</span>
+      <span class="spinner" id="spinner"></span>
+    </button>
+  </div>
+</div>
+
+<div class="card" id="success-card" style="display:none">
+  <div class="success-card">
+    <div class="success-icon">✓</div>
+    <h2>Obrigado pela resposta!</h2>
+    <p>Sua avaliação foi registrada com sucesso.<br>
+    Ela vai diretamente para o nosso time de Customer Success.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <span id="deal-ref"></span><br>
+  Não quer mais receber pesquisas?
+  <a href="#" id="unsub-link">Cancelar inscrição</a>
+</div>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
