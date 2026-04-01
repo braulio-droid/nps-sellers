@@ -9,7 +9,7 @@
   <style>
     /* ─── Tokens ─── */
     :root {
-      --navy:   #0d1b2a;
+      --navy:   #0d1b2a;h
       --blue:   #1a5dab;h
       --blue-l: #e8f0fb;
       --teal:   #0f6e56;
@@ -392,6 +392,10 @@
     const decoded = atob(token.replace(/-/g,'+').replace(/_/g,'/'));
     [contactId, dealId, mesISO] = decoded.split('|');
   } catch(e) {}
+
+    // Exibe nome do contato
+    const nomeContato = params.get('nome') || 'cliente';
+    document.getElementById('nome-contato').textContent = nomeContato;
 
   // Exibe mês de referência
   if (mesISO) {
