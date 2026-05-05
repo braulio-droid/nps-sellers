@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sellers — Avaliacao rapida</title>
+<title>Sellers — Avalia&#231;&#227;o r&#225;pida</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -57,13 +57,13 @@ textarea:focus{border-color:#1a5dab;background:#fff;}
 
 <div class="card" id="form-card">
   <div class="card-top">
-    <div class="eyebrow">Pesquisa de Satisfacao — <span id="mes-ref">este mes</span></div>
-    <h1 class="greeting">Ola, <em id="nome-contato">cliente</em>!</h1>
-    <p class="intro">Sua opiniao e o que orienta as nossas proximas decisoes. Responda uma pergunta rapida — leva menos de 30 segundos.</p>
+    <div class="eyebrow">Pesquisa de Satisfa&#231;&#227;o — <span id="mes-ref">este m&#234;s</span></div>
+    <h1 class="greeting">Ol&#225;, <em id="nome-contato">cliente</em>!</h1>
+    <p class="intro">Sua opini&#227;o &#233; o que orienta as nossas pr&#243;ximas decis&#245;es. Responda uma pergunta r&#225;pida — leva menos de 30 segundos.</p>
   </div>
   <div class="question-wrap">
-    <p class="question">Em uma escala de 0 a 10, o quanto voce recomendaria a Sellers a um colega ou parceiro de negocio?</p>
-    <div class="scale-hint"><span>0 — Muito improvavel</span><span>10 — Com certeza</span></div>
+    <p class="question">Em uma escala de 0 a 10, o quanto voc&#234; recomendaria a Sellers a um colega ou parceiro de neg&#243;cio?</p>
+    <div class="scale-hint"><span>0 — Muito improv&#225;vel</span><span>10 — Com certeza</span></div>
     <div class="nps-grid" id="nps-grid"></div>
     <div class="cat-label" id="cat-label"></div>
   </div>
@@ -72,10 +72,10 @@ textarea:focus{border-color:#1a5dab;background:#fff;}
     <p class="comment-sub" id="comment-sub"></p>
     <textarea id="comentario" placeholder="Escreva aqui..."></textarea>
   </div>
-  <div class="error-msg" id="error-msg">Nao conseguimos registrar sua resposta. Tente novamente em instantes.</div>
+  <div class="error-msg" id="error-msg">N&#227;o conseguimos registrar sua resposta. Tente novamente em instantes.</div>
   <div class="cta-wrap">
     <button type="button" class="cta-btn" id="cta-btn">
-      <span id="cta-text">Enviar avaliacao</span>
+      <span id="cta-text">Enviar avalia&#231;&#227;o</span>
       <span class="spinner" id="spinner"></span>
     </button>
   </div>
@@ -85,7 +85,7 @@ textarea:focus{border-color:#1a5dab;background:#fff;}
   <div class="success-card">
     <div class="success-icon">&#10003;</div>
     <h2>Obrigado pela resposta!</h2>
-    <p>Sua avaliacao foi registrada com sucesso.<br>Ela vai diretamente para o nosso time de Customer Success.</p>
+    <p>Sua avalia&#231;&#227;o foi registrada com sucesso.<br>Ela vai diretamente para o nosso time de Customer Success.</p>
   </div>
 </div>
 
@@ -98,9 +98,9 @@ textarea:focus{border-color:#1a5dab;background:#fff;}
 var WEBHOOK_URL = 'https://script.google.com/a/macros/sellers.com.br/s/AKfycbzFhuY1Ooha8fD5jYP-62PQB66xR9e5WxqzUTASGTQm2W6RI2TAtu_TcjnVcwb5xTIIcA/exec';
 
 var CAT_TEXTS = {
-  det: { label: '(0-6) Detrator', sub: 'Sentimos muito. O que poderiamos ter feito diferente?' },
-  neu: { label: '(7-8) Neutro', sub: 'O que faria voce nos recomendar com mais confianca?' },
-  pro: { label: '(9-10) Promotor', sub: 'Fico feliz em ouvir isso! Tem algo que podemos melhorar ainda?' }
+  det: { label: '(0–6) Detrator', sub: 'Sentimos muito. O que poderíamos ter feito diferente?' },
+  neu: { label: '(7–8) Neutro', sub: 'O que faria você nos recomendar com mais confiança?' },
+  pro: { label: '(9–10) Promotor', sub: 'Fico feliz em ouvir isso! Tem algo que podemos melhorar ainda?' }
 };
 
 /* =============================================
@@ -156,7 +156,7 @@ if (mesISO) {
 
 // Referencia do deal
 if (dealId) {
-  document.getElementById('deal-ref').textContent = 'Referencia de negocio: #' + dealId;
+  document.getElementById('deal-ref').textContent = 'Referência de negócio: #' + dealId;
 }
 
 /* =============================================
