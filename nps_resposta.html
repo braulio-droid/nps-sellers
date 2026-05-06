@@ -232,73 +232,27 @@ function enviar() {
   var btn = document.getElementById('cta-btn');
   var txt = document.getElementById('cta-text');
   var spin = document.getElementById('spinner');
-  var errEl = document.getElementById('error-msg');
 
   btn.className = 'cta-btn';
   txt.style.display = 'none';
   spin.style.display = 'block';
-  errEl.style.display = 'none';
 
   var comentarioVal = document.getElementById('comentario').value.trim();
 
-  /* ── ENVIO VIA FORMULARIO OCULTO + IFRAME ──
-     O fetch com no-cors falha para usuarios externos porque o
-     redirect 302 do GAS converte POST em GET e perde o body.
-     A solucao e usar um <form> GET dentro de um <iframe> oculto.
-     Isso funciona para QUALQUER usuario, sem CORS, sem login Google. */
+  /* ── ENVIO VIA REDIRECT DIRETO ──
+     Navega o proprio navegador para a URL do GAS com os parametros.
+     O GAS processa os dados e retorna uma pagina HTML de sucesso.
+     Sem iframe, sem CORS, sem fetch — funciona para QUALQUER usuario. */
 
-  // 1. Cria iframe oculto
-  var iframe = document.createElement('iframe');
-  iframe.name = 'nps-submit-frame';
-  iframe.style.display = 'none';
-  document.body.appendChild(iframe);
-
-  // 2. Cria formulario oculto apontando para o iframe
-  var form = document.createElement('form');
-  form.method = 'GET';
-  form.action = WEBHOOK_URL;
-  form.target = 'nps-submit-frame';
-
-  var campos = {
-    contactId: contactId,
-    dealId: dealId,
-    mesISO: mesISO,
-    nota: notaSelecionada,
-    comentario: comentarioVal,
-    source: 'form-v5'
-  };
-
-  for (var key in campos) {
-    if (campos.hasOwnProperty(key)) {
-      var input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = key;
-      input.value = campos[key];
-      form.appendChild(input);
-    }
-  }
-
-  document.body.appendChild(form);
-  form.submit();
-
-  // 3. Backup via Image pixel (segunda via de seguranca)
-  var getParams = 'contactId=' + encodeURIComponent(contactId) +
+  var params = 'contactId=' + encodeURIComponent(contactId) +
     '&dealId=' + encodeURIComponent(dealId) +
     '&mesISO=' + encodeURIComponent(mesISO) +
     '&nota=' + encodeURIComponent(notaSelecionada) +
     '&comentario=' + encodeURIComponent(comentarioVal) +
-    '&source=form-v5-img';
-  var img = new Image();
-  img.src = WEBHOOK_URL + '?' + getParams;
+    '&nome=' + encodeURIComponent(document.getElementById('nome-contato').textContent) +
+    '&source=form-v6';
 
-  // 4. Mostra tela de sucesso apos 2s (tempo para o GAS processar)
-  setTimeout(function() {
-    document.getElementById('form-card').style.display = 'none';
-    document.getElementById('success-card').style.display = 'block';
-    // Limpa iframe e form do DOM
-    try { document.body.removeChild(iframe); } catch(e) {}
-    try { document.body.removeChild(form); } catch(e) {}
-  }, 2000);
+  window.location.href = WEBHOOK_URL + '?' + params;
 }
 </script>
 </body>
