@@ -241,45 +241,64 @@ function enviar() {
 
   var comentarioVal = document.getElementById('comentario').value.trim();
 
-  var payload = JSON.stringify({
+  /* ── ENVIO VIA FORMULARIO OCULTO + IFRAME ──
+     O fetch com no-cors falha para usuarios externos porque o
+     redirect 302 do GAS converte POST em GET e perde o body.
+     A solucao e usar um <form> GET dentro de um <iframe> oculto.
+     Isso funciona para QUALQUER usuario, sem CORS, sem login Google. */
+
+  // 1. Cria iframe oculto
+  var iframe = document.createElement('iframe');
+  iframe.name = 'nps-submit-frame';
+  iframe.style.display = 'none';
+  document.body.appendChild(iframe);
+
+  // 2. Cria formulario oculto apontando para o iframe
+  var form = document.createElement('form');
+  form.method = 'GET';
+  form.action = WEBHOOK_URL;
+  form.target = 'nps-submit-frame';
+
+  var campos = {
     contactId: contactId,
     dealId: dealId,
     mesISO: mesISO,
     nota: notaSelecionada,
     comentario: comentarioVal,
-    source: 'form-v4'
-  });
+    source: 'form-v5'
+  };
 
-  /* ── ESTRATEGIA DUPLA DE ENVIO ──
-     1. fetch POST com mode:'no-cors' (principal)
-     2. GET via Image pixel como fallback (GAS processa ambos)
-     Isso garante que pelo menos um dos dois chegue ao GAS. */
+  for (var key in campos) {
+    if (campos.hasOwnProperty(key)) {
+      var input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = key;
+      input.value = campos[key];
+      form.appendChild(input);
+    }
+  }
 
-  // Fallback via GET (Image pixel) — dispara imediatamente
+  document.body.appendChild(form);
+  form.submit();
+
+  // 3. Backup via Image pixel (segunda via de seguranca)
   var getParams = 'contactId=' + encodeURIComponent(contactId) +
     '&dealId=' + encodeURIComponent(dealId) +
     '&mesISO=' + encodeURIComponent(mesISO) +
     '&nota=' + encodeURIComponent(notaSelecionada) +
     '&comentario=' + encodeURIComponent(comentarioVal) +
-    '&source=form-v4-get';
+    '&source=form-v5-img';
   var img = new Image();
   img.src = WEBHOOK_URL + '?' + getParams;
 
-  // Principal via POST (no-cors)
-  fetch(WEBHOOK_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
-    body: payload
-  }).then(function() {
+  // 4. Mostra tela de sucesso apos 2s (tempo para o GAS processar)
+  setTimeout(function() {
     document.getElementById('form-card').style.display = 'none';
     document.getElementById('success-card').style.display = 'block';
-  }).catch(function() {
-    // POST falhou, mas o GET via image ja foi disparado
-    // Mostra sucesso mesmo assim (o GET provavelmente funcionou)
-    document.getElementById('form-card').style.display = 'none';
-    document.getElementById('success-card').style.display = 'block';
-  });
+    // Limpa iframe e form do DOM
+    try { document.body.removeChild(iframe); } catch(e) {}
+    try { document.body.removeChild(form); } catch(e) {}
+  }, 2000);
 }
 </script>
 </body>
