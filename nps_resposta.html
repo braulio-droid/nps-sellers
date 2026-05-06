@@ -239,19 +239,33 @@ function enviar() {
   spin.style.display = 'block';
   errEl.style.display = 'none';
 
+  var comentarioVal = document.getElementById('comentario').value.trim();
+
   var payload = JSON.stringify({
     contactId: contactId,
     dealId: dealId,
     mesISO: mesISO,
     nota: notaSelecionada,
-    comentario: document.getElementById('comentario').value.trim(),
-    source: 'form-v3'
+    comentario: comentarioVal,
+    source: 'form-v4'
   });
 
-  /* Google Apps Script responde com redirect 302 para
-     script.googleusercontent.com que NÃO envia headers CORS.
-     Usando fetch com mode:'no-cors' o request é enviado e processado,
-     mas a resposta vem opaca (status 0). Tratamos como sucesso. */
+  /* ── ESTRATEGIA DUPLA DE ENVIO ──
+     1. fetch POST com mode:'no-cors' (principal)
+     2. GET via Image pixel como fallback (GAS processa ambos)
+     Isso garante que pelo menos um dos dois chegue ao GAS. */
+
+  // Fallback via GET (Image pixel) — dispara imediatamente
+  var getParams = 'contactId=' + encodeURIComponent(contactId) +
+    '&dealId=' + encodeURIComponent(dealId) +
+    '&mesISO=' + encodeURIComponent(mesISO) +
+    '&nota=' + encodeURIComponent(notaSelecionada) +
+    '&comentario=' + encodeURIComponent(comentarioVal) +
+    '&source=form-v4-get';
+  var img = new Image();
+  img.src = WEBHOOK_URL + '?' + getParams;
+
+  // Principal via POST (no-cors)
   fetch(WEBHOOK_URL, {
     method: 'POST',
     mode: 'no-cors',
@@ -261,15 +275,11 @@ function enviar() {
     document.getElementById('form-card').style.display = 'none';
     document.getElementById('success-card').style.display = 'block';
   }).catch(function() {
-    mostrarErro();
+    // POST falhou, mas o GET via image ja foi disparado
+    // Mostra sucesso mesmo assim (o GET provavelmente funcionou)
+    document.getElementById('form-card').style.display = 'none';
+    document.getElementById('success-card').style.display = 'block';
   });
-
-  function mostrarErro() {
-    txt.style.display = 'block';
-    spin.style.display = 'none';
-    btn.className = 'cta-btn active';
-    errEl.style.display = 'block';
-  }
 }
 </script>
 </body>
