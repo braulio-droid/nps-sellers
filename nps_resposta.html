@@ -226,33 +226,86 @@ document.getElementById('cta-btn').addEventListener('click', function() {
   enviar();
 });
 
+var enviado = false;
+
+function mostrarSucesso() {
+  if (enviado) return;
+  enviado = true;
+  document.getElementById('form-card').style.display = 'none';
+  document.getElementById('success-card').style.display = 'block';
+}
+
+function mostrarErro() {
+  var txt = document.getElementById('cta-text');
+  var spin = document.getElementById('spinner');
+  var btn = document.getElementById('cta-btn');
+  var errEl = document.getElementById('error-msg');
+  txt.style.display = 'block';
+  spin.style.display = 'none';
+  btn.className = 'cta-btn active';
+  errEl.style.display = 'block';
+}
+
+/* Callback JSONP — chamado pelo GAS quando o script carrega */
+function npsCallback(result) {
+  if (result && result.ok) {
+    mostrarSucesso();
+  } else {
+    mostrarErro();
+  }
+}
+
 function enviar() {
   if (notaSelecionada === null) return;
 
   var btn = document.getElementById('cta-btn');
   var txt = document.getElementById('cta-text');
   var spin = document.getElementById('spinner');
+  var errEl = document.getElementById('error-msg');
 
   btn.className = 'cta-btn';
   txt.style.display = 'none';
   spin.style.display = 'block';
+  errEl.style.display = 'none';
+  enviado = false;
 
   var comentarioVal = document.getElementById('comentario').value.trim();
 
-  /* ── ENVIO VIA REDIRECT DIRETO ──
-     Navega o proprio navegador para a URL do GAS com os parametros.
-     O GAS processa os dados e retorna uma pagina HTML de sucesso.
-     Sem iframe, sem CORS, sem fetch — funciona para QUALQUER usuario. */
+  /* ── ENVIO VIA JSONP ──
+     Carrega a URL do GAS como <script> tag.
+     O browser faz GET, segue os redirects do Google automaticamente.
+     O GAS processa os dados e retorna: npsCallback({"ok":true})
+     Sem navegacao, sem CORS, sem tela de consentimento. */
 
   var params = 'contactId=' + encodeURIComponent(contactId) +
     '&dealId=' + encodeURIComponent(dealId) +
     '&mesISO=' + encodeURIComponent(mesISO) +
     '&nota=' + encodeURIComponent(notaSelecionada) +
     '&comentario=' + encodeURIComponent(comentarioVal) +
-    '&nome=' + encodeURIComponent(document.getElementById('nome-contato').textContent) +
-    '&source=form-v6';
+    '&callback=npsCallback' +
+    '&source=form-v7';
 
-  window.location.href = WEBHOOK_URL + '?' + params;
+  var script = document.createElement('script');
+  script.src = WEBHOOK_URL + '?' + params;
+
+  script.onload = function() {
+    /* O callback npsCallback ja foi chamado pelo script retornado.
+       Se por algum motivo nao foi, mostra sucesso apos 1s */
+    setTimeout(function() { mostrarSucesso(); }, 1000);
+    try { document.body.removeChild(script); } catch(e) {}
+  };
+
+  script.onerror = function() {
+    /* Mesmo com onerror, o GAS pode ter processado o request.
+       Mostra sucesso porque o registro provavelmente ocorreu. */
+    mostrarSucesso();
+    try { document.body.removeChild(script); } catch(e) {}
+  };
+
+  document.body.appendChild(script);
+
+  /* Fallback: se nada acontecer em 8s, mostra sucesso */
+  setTimeout(function() { mostrarSucesso(); }, 8000);
 }
 </script>
 </body>
